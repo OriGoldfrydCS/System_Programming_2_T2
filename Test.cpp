@@ -6,6 +6,29 @@
 using namespace ariel;
 using namespace std;
 
+// Test case for unary + operator with undirected graph
+TEST_CASE("Operation +: Unary + on undirected graph") {
+    Graph g1;
+    vector<vector<int>> graph1 = {
+        {0, 1, 2},
+        {1, 0, 3},
+        {2, 3, 0}
+    };
+    g1.loadGraph(graph1);
+
+    Graph g2 = +g1;
+    CHECK(g2.printGraph() == "[0, 1, 2]\n[1, 0, 3]\n[2, 3, 0]");
+
+    // Additional checks for Algorithms functions
+    CHECK(Algorithms::isConnected(g2) == true);
+    CHECK(Algorithms::isStronglyConnected(g2) == true);
+    CHECK(Algorithms::shortestPath(g2, 0, 2) == "0->2");
+    CHECK(Algorithms::isContainsCycle(g2) != "0");
+    CHECK(Algorithms::isBipartite(g2) == "The graph is not bipartite");
+    CHECK(Algorithms::negativeCycle(g2) == "No negative cycle exists");
+}
+
+
 // Test Case for +
 TEST_CASE("Operation +: Add two graphs") 
 {
@@ -106,6 +129,28 @@ TEST_CASE("Operation +: Add graphs with different sizes")
     g2.loadGraph(graph2);
 
     CHECK_THROWS_AS(g1 + g2, invalid_argument);
+}
+
+// Test case for unary - operator with directed graph
+TEST_CASE("Operation -: Unary - on directed graph") {
+    Graph g1;
+    vector<vector<int>> graph1 = {
+        {0, 1, 2},
+        {0, 0, 3},
+        {0, 0, 0}
+    };
+    g1.loadGraph(graph1);
+
+    Graph g2 = -g1;
+    CHECK(g2.printGraph() == "[0, -1, -2]\n[0, 0, -3]\n[0, 0, 0]");
+
+    // Additional checks for Algorithms functions
+    CHECK(Algorithms::isConnected(g2) == true);
+    CHECK(Algorithms::isStronglyConnected(g2) == false);
+    CHECK(Algorithms::shortestPath(g2, 0, 2) == "0->1->2");
+    CHECK(Algorithms::isContainsCycle(g2) == "0");
+    CHECK(Algorithms::isBipartite(g2) == "The graph is not bipartite");
+    CHECK(Algorithms::negativeCycle(g2) == "No negative cycle exists");
 }
 
 
@@ -475,6 +520,28 @@ TEST_CASE("Operation <: Compare graphs with the same size but different edges")
     g2.loadGraph(graph2);
 
     CHECK(g1 < g2);
+}
+
+TEST_CASE("Operator <: Graph with positive and negative edges, different sizes") {
+    Graph g1;
+    vector<vector<int>> matrix1 = {
+        {0, 2, 0, 0, 0},
+        {2, 0, -1, 3, 0},
+        {0, -1, 0, 4, 0},
+        {0, 3, 4, 0, -2},
+        {0, 0, 0, -2, 0}
+    };
+    g1.loadGraph(matrix1);
+    
+    Graph g2;
+    vector<vector<int>> matrix2 = {
+        {0, -1, 3},
+        {-1, 0, 4},
+        {3, 4, 0}
+    };
+    g2.loadGraph(matrix2);
+    
+    CHECK(g2 < g1);
 }
 
 // Test Case for <=
