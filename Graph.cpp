@@ -1,3 +1,6 @@
+// ID: 200661775
+// Email: origoldbsc@gmail.com
+
 #include "Graph.hpp"
 #include <stdexcept>
 #include <cmath>
@@ -137,7 +140,7 @@ namespace ariel {
      * @return The resulting graph.
      * @throws if the graphs have different sizes or are not square.
      */
-    Graph Graph::operator+(Graph& other) const 
+    Graph Graph::operator+(const Graph& other) const 
     {   
         // Check if the two graphs have the same number of vertices
         if ((*this)._numVertices != other._numVertices) 
@@ -219,7 +222,7 @@ namespace ariel {
      * @return The resulting graph.
      * @throws if the graphs have different sizes or are not square.
      */
-    Graph Graph::operator-(Graph& other) const 
+    Graph Graph::operator-(const Graph& other) const 
     {   
         // Check if the two graphs have the same number of vertices
         if ((*this)._numVertices != other._numVertices) 
@@ -282,7 +285,7 @@ namespace ariel {
      * @return The resulting graph after multiplication.
      * @throws if the graphs have different sizes.
      */
-    Graph Graph::operator*(Graph& other) const 
+    Graph Graph::operator*(const Graph& other) const 
     {
         // Check if the two graphs have the same number of vertices
         if ((*this)._numVertices != other._numVertices) 
@@ -385,7 +388,7 @@ namespace ariel {
      * @param other The graph to compare with.
      * @return True if the graphs are equal, otherwise false.
      */
-    bool Graph::operator==(Graph& other) const 
+    bool Graph::operator==(const Graph& other) const 
     {
         // Check if the two graphs have the same number of vertices
         if ((*this)._numVertices != other._numVertices) 
@@ -426,7 +429,7 @@ namespace ariel {
      * @param other The graph to compare with.
      * @return True if the graphs are not equal, otherwise false.
      */
-    bool Graph::operator!=(Graph& other) const 
+    bool Graph::operator!=(const Graph& other) const 
     {
         return !(*this == other);
     }
@@ -464,7 +467,7 @@ namespace ariel {
      * @param other The graph to compare with.
      * @return True if the current graph is less than or equal to the other graph, otherwise false.
      */
-    bool Graph::operator<=(Graph& other) const 
+    bool Graph::operator<=(const Graph& other) const 
     {
         return *this < other || *this == other;
     }
@@ -476,7 +479,7 @@ namespace ariel {
      * @param other The graph to compare with.
      * @return True if the current graph is greater than the other graph, otherwise false.
      */
-    bool Graph::operator>(Graph& other) const 
+    bool Graph::operator>(const Graph& other) const 
     {
         return other < *this;
     }
@@ -488,7 +491,7 @@ namespace ariel {
      * @param other The graph to compare with.
      * @return True if the current graph is greater than or equal to the other graph, otherwise false.
      */
-    bool Graph::operator>=(Graph& other) const 
+    bool Graph::operator>=(const Graph& other) const 
     {
         return *this > other || *this == other;
     }

@@ -1,3 +1,6 @@
+// ID: 200661775
+// Email: origoldbsc@gmail.com
+
 #ifndef ALGORITHMS_H
 #define ALGORITHMS_H
 

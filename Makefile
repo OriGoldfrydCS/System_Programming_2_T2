@@ -1,3 +1,6 @@
+# ID: 200661775
+# Email: origoldbsc@gmail.com
+
 # General macros
 CXX = clang++
 CXXFLAGS = -std=c++11 -Werror -Wsign-conversion

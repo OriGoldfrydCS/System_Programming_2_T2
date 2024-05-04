@@ -1,3 +1,6 @@
+// ID: 200661775
+// Email: origoldbsc@gmail.com
+
 #ifndef GRAPH_HPP
 #define GRAPH_HPP
 
@@ -119,7 +122,7 @@ class Graph
          * @return The resulting graph.
          * @throws if the graphs have different sizes or are not square.
          */
-        Graph operator+(Graph& other) const;
+        Graph operator+(const Graph& other) const;
 
 
         /**
@@ -143,7 +146,7 @@ class Graph
          * @return The resulting graph.
          * @throws if the graphs have different sizes or are not square.
          */
-        Graph operator-(Graph& other) const;
+        Graph operator-(const Graph& other) const;
 
 
         /**
@@ -160,7 +163,7 @@ class Graph
          * @return The resulting graph after multiplication.
          * @throws if the graphs have different sizes.
          */
-        Graph operator*(Graph& other) const;
+        Graph operator*(const Graph& other) const;
 
 
         /**
@@ -185,7 +188,7 @@ class Graph
          * @param other The graph to compare with.
          * @return True if the graphs are equal, otherwise false.
          */
-        bool operator==(Graph& other) const;
+        bool operator==(const Graph& other) const;
 
 
         /**
@@ -193,7 +196,7 @@ class Graph
          * @param other The graph to compare with.
          * @return True if the graphs are not equal, otherwise false.
          */
-        bool operator!=(Graph& other) const;
+        bool operator!=(const Graph& other) const;
 
 
         /**
@@ -209,7 +212,7 @@ class Graph
          * @param other The graph to compare with.
          * @return True if the current graph is less than or equal to the other graph, otherwise false.
          */
-        bool operator<=(Graph& other) const;
+        bool operator<=(const Graph& other) const;
 
 
         /**
@@ -217,7 +220,7 @@ class Graph
          * @param other The graph to compare with.
          * @return True if the current graph is greater than the other graph, otherwise false.
          */
-        bool operator>(Graph& other) const;
+        bool operator>(const Graph& other) const;
 
 
         /**
@@ -225,7 +228,7 @@ class Graph
          * @param other The graph to compare with.
          * @return True if the current graph is greater than or equal to the other graph, otherwise false.
          */
-        bool operator>=(Graph& other) const;
+        bool operator>=(const Graph& other) const;
 
 
         /**
