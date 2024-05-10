@@ -1,4 +1,3 @@
-// ID: 200661775
 // Email: origoldbsc@gmail.com
 
 #include "doctest.h"
@@ -630,7 +629,7 @@ TEST_CASE("Operation >=: Compare a larger graph with a smaller graph or identica
     CHECK(g1 >= g3);
 }
 
-// Test Case for ++
+// Test Case for Prefix and Postfix ++
 TEST_CASE("Operation ++: Increment all edges") 
 {
     vector<vector<int>> graph1 = {
@@ -639,8 +638,18 @@ TEST_CASE("Operation ++: Increment all edges")
         {2, 3, 0}};
     g1.loadGraph(graph1);
 
-    ++g1;
-    CHECK(g1.printGraph() == "[0, 2, 3]\n[2, 0, 4]\n[3, 4, 0]");
+    // Test prefix ++
+    Graph preInc = ++g1;
+    CHECK(preInc.printGraph() == "[0, 2, 3]\n[2, 0, 4]\n[3, 4, 0]");
+    CHECK(g1.printGraph() == "[0, 2, 3]\n[2, 0, 4]\n[3, 4, 0]");        // In that case: g1 should also be updated
+
+    // Reset graph to original values
+    g1.loadGraph(graph1);
+
+    // Test postfix ++
+    Graph postInc = g1++;
+    CHECK(postInc.printGraph() == "[0, 1, 2]\n[1, 0, 3]\n[2, 3, 0]");   // Post-increment should show the original graph
+    CHECK(g1.printGraph() == "[0, 2, 3]\n[2, 0, 4]\n[3, 4, 0]");        // In that case: g1 should now be incremented
 }
 
 TEST_CASE("Operation ++: Increment a graph with negative weights") 
@@ -655,7 +664,7 @@ TEST_CASE("Operation ++: Increment a graph with negative weights")
     CHECK(g1.printGraph() == "[0, 0, 3]\n[0, 0, -2]\n[3, -2, 0]");
 }
 
-// Test Case for --
+// Test Case for Prefix and Postfix --
 TEST_CASE("Operation --: Decrement all edges") 
 {
     vector<vector<int>> graph1 = {
@@ -664,8 +673,18 @@ TEST_CASE("Operation --: Decrement all edges")
         {2, 3, 0}};
     g1.loadGraph(graph1);
 
-    --g1;
-    CHECK(g1.printGraph() == "[0, 0, 1]\n[0, 0, 2]\n[1, 2, 0]");
+    // Test prefix --
+    Graph preDec = --g1;
+    CHECK(preDec.printGraph() == "[0, 0, 1]\n[0, 0, 2]\n[1, 2, 0]");
+    CHECK(g1.printGraph() == "[0, 0, 1]\n[0, 0, 2]\n[1, 2, 0]");        // In that case: g1 should also be updated
+
+    // Reset graph to original values
+    g1.loadGraph(graph1);
+
+    // Test postfix --
+    Graph postDecremented = g1--;
+    CHECK(postDecremented.printGraph() == "[0, 1, 2]\n[1, 0, 3]\n[2, 3, 0]");   // Post-decrement should show the original graph
+    CHECK(g1.printGraph() == "[0, 0, 1]\n[0, 0, 2]\n[1, 2, 0]");                // In that case: g1 should now be decremented
 }
 
 TEST_CASE("Operation --: Decrement a graph with negative weights") 

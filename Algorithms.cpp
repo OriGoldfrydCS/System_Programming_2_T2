@@ -1,4 +1,3 @@
-// ID: 200661775
 // Email: origoldbsc@gmail.com
 
 #include "Algorithms.hpp"
@@ -14,8 +13,9 @@ using namespace std;
 
 namespace ariel {
     
+    
     /**
-     * @brief This method checks if all vertices in a given graph are reachable from the vertex with index 0 by using BFS algorithm.
+     * @brief This method checks if all vertices in a given graph reachable from the vertex with index 0 by using BFS algorithm.
      *
      * @param graph The graph to check.
      * @return true if all vertices are reachable; otherwise, false.
@@ -30,10 +30,10 @@ namespace ariel {
             return true;
         }
 
-        vector<bool> visited(numVertices, false);       // Initialize a vector with numVertices elements and sets each of them to false
+        vector<bool> visited(numVertices, false);          // Initialize a vector with numVertices elements and sets each of them to false
 
-        vector<size_t> parent(numVertices, INT_MAX);    // Create a dummy parent vector (added to make bfs function to be used for finding shortest path as well)
-        bfs(graph, 0, visited, parent, INT_MAX);        // Perform BFS starting from vertex 0 (INT_MAX is a dummy variable, from the reason mentioned above)
+        vector<size_t> parent(numVertices, INT_MAX);       // Create a dummy parent vector (added to make bfs function to be used for finding shortest path as well)
+        bfs(graph, 0, visited, parent, INT_MAX, false);    // Perform BFS starting from vertex 0 (INT_MAX and "false" are dummy variables, from the reason mentioned above)
 
         // If any vertex was not visited, the graph is not connected
         for (size_t i = 0; i < numVertices; i++) 
@@ -65,10 +65,11 @@ namespace ariel {
         }
 
         // Perform BFS from each vertex
-        for (size_t startVertex = 0; startVertex < numVertices; startVertex++) {
+        for (size_t startVertex = 0; startVertex < numVertices; startVertex++) 
+        {
             vector<bool> visited(numVertices, false);           // Initiate a vector to keep tracking the visited vertices
             vector<size_t> parent(numVertices, INT_MAX);        // Create a dummy parent vector (added to make bfs function to be used for finding shortest path as well)
-            bfs(graph, startVertex, visited, parent, INT_MAX);  // INT_MAX is a dummy variable, from the reason mentioned above
+            bfs(graph, startVertex, visited, parent, INT_MAX, false);  // INT_MAX and  "false" are dummy variables, from the reason mentioned above
 
             // If any vertex was not visited, the graph is not strongly connected
             for (size_t i = 0; i < numVertices; i++) 
@@ -88,7 +89,7 @@ namespace ariel {
      * @brief This method finds the shortest path between two vertices in a given graph.
      *
      * @note: The method uses a strategy to choose the appropriate algorithm based on the properties of the graph (weighted/unweighted, containts negative edges or not).
-     * It uses BFS for unweighted graphs (time complexity: O(|V|*|E|)), Bellman-Ford for graphs with negative weights (time complexity: O(|V|*|E|)), 
+     * It uses BFS for unweighted graphs (time complexity: O(|V|+|E|)), Bellman-Ford for graphs with negative weights (time complexity: O(|V|*|E|)), 
      * or Dijkstra's for non-negative weighted graphs (time complexity: O(|V|*|V|)), and thus does not waste resources.
      *
      * @param graph The graph.
@@ -112,21 +113,25 @@ namespace ariel {
             return "No path exists between a vertex and itself";
         }
 
-        // Check if the graph is unweighted and has negative edges to choose the relevant algorithm
+        // Extract sub-graph that contains both the start and end vertices
+        Graph subgraph;
+        extractSubgraph(graph, start, end, subgraph);
+
+        // Check if the graph is unweighted and has negative edges to choose the relevant algorithm to run
         pair<bool, bool> graphType = checkGraphType(graph);
         bool isUnweighted = graphType.first;
         bool hasNegativeEdges = graphType.second;
 
-        // Choose the algorithm based on the graph type
+        // Choose the algorithm based on the graph's type
         if (isUnweighted) 
         {
-            return bfsShortestPath(graph, start, end);
+            return bfsShortestPath(subgraph, start, end);
         } 
         if (hasNegativeEdges) 
         {
-            return bellmanFordShortestPath(graph, start, end);
+            return bellmanFordShortestPath(subgraph, start, end);
         } 
-        return dijkstraShortestPath(graph, start, end);        
+        return dijkstraShortestPath(subgraph, start, end);        
     }
 
      /**
@@ -244,6 +249,7 @@ namespace ariel {
                 if (vertex_u != vertex_v && graph.getAdjacencyMatrix()[vertex_u][vertex_v] != 0 && graph.getAdjacencyMatrix()[vertex_v][vertex_u] != 0 &&
                     graph.getAdjacencyMatrix()[vertex_u][vertex_v] != graph.getAdjacencyMatrix()[vertex_v][vertex_u]) 
                     {
+                    
                     int weight = graph.getAdjacencyMatrix()[vertex_u][vertex_v] + graph.getAdjacencyMatrix()[vertex_v][vertex_u];
                     if (weight < 0) 
                     {
@@ -279,8 +285,9 @@ namespace ariel {
      * @param parent A vector to track the parent of the vertices (extents the classic BFS for finding the shortest path).
      * @param parent A vector to track the parent of each vertex, used for rebuilding paths (extents the classic BFS for finding the shortest path).
      */
-    void Algorithms::bfs(Graph& graph, size_t startVertex, vector<bool>& visited, vector<size_t>& parent, size_t end) {
-        queue<size_t> queue;
+    void Algorithms::bfs(Graph& graph, size_t startVertex, vector<bool>& visited, vector<size_t>& parent, size_t end, bool reverse = false) 
+    {
+        queue<size_t> queue;                    // Initiate queue to track the vertices in the graph
         visited[startVertex] = true;            // Mark the startVertex as visited
         queue.push(startVertex);                // Add the startVertex to the queue 
 
@@ -288,26 +295,79 @@ namespace ariel {
         // According to the BFS algorithm we will continue the process until there are no more vertices to explore
         while (!queue.empty()) 
         {
-            size_t currentVertex = queue.front();                         // Store the front vertex and remove it from the queue
+            size_t currentVertex = queue.front();       // Store the front vertex and remove it from the queue
             queue.pop();
 
-            // This condition is  only used for bfsShortestPath
+            // NOTE: This condition is only used for bfsShortestPath
             if (currentVertex == end) 
             {
                 break;
             }
 
-            for (size_t i = 0; i < graph.getNumVertices(); i++)           // Iterate over all vertices in the graph to find all neighbors vertices
+            size_t numVertices = graph.getNumVertices();
+            for (size_t i = 0; i < numVertices; i++)           // Iterate over all vertices in the graph to find all neighbors vertices
             {
+
+                // NOTE: This variables is more relevant for the shortest path's (to extract the sub-graph)
+                // In other cases, reverse is equal to "false" defaultly
+                size_t neighbour = reverse ? i : currentVertex;
+                size_t target = reverse ? currentVertex : i;
+
                 // Check if there is an edge from currentVertex to vertex i, and it is still "true" (not visited yet)
-                if (graph.getAdjacencyMatrix()[currentVertex][i] != 0 && !visited[i]) 
+                if(graph.getAdjacencyMatrix()[neighbour][target] != 0 && !visited[i]) 
                 {
                     visited[i] = true;
-                    queue.push(i);
                     parent[i] = currentVertex;
+                    queue.push(i);
                 }
             }
         }
+    }
+
+    /**
+     * @brief This auxiliary function extracts a subgraph from the given graph, 
+     * containing only nodes and edges that form possible paths from the start to the end vertex.
+     *
+     * The function uses two breadth-first searches (BFS):
+     * 1. A forward BFS from the start vertex to identify all nodes reachable from the start.
+     * 2. A reverse BFS from the end vertex to identify all nodes that can lead to the end.
+     * The intersection of these nodes create the set of relevant nodes in the subgraph.
+     *
+     * @param graph The original graph from which the subgraph is to be extracted.
+     * @param start The starting vertex for potential paths.
+     * @param end The ending vertex for potential paths.
+     * @param subgraph A Graph object that will be populated with the resulting subgraph.
+     */
+    void Algorithms::extractSubgraph(Graph& graph, size_t start, size_t end, Graph& subgraph) 
+    {
+        size_t numVertices = graph.getNumVertices();            // A variable to store the number of vertices in the original graph
+        vector<bool> reachableFromStart(numVertices, false);    // A vector to track which nodes are reachable from the start vertex
+        vector<bool> leadsToEnd(numVertices, false);            // A vector to tracks which nodes can lead to the end vertex
+        vector<size_t> parent(numVertices, SIZE_MAX);           // Dummy parent vector for BFS, not used here but necessary for the bfs function signature
+
+
+        bfs(graph, start, reachableFromStart, parent, SIZE_MAX, false);     // BFS from the start vertex to find all reachable nodes
+        bfs(graph, end, leadsToEnd, parent, SIZE_MAX, true);                // Reverse BFS from the end vertex on the reverse graph to find all nodes leading to the end
+
+
+        // Build the subgraph based on nodes that are both reachable from start and can lead to end
+        vector<vector<int>> subgraphMat(numVertices, vector<int>(numVertices, 0));
+        for (size_t i = 0; i < numVertices; i++) 
+        {
+            if (reachableFromStart[i] && leadsToEnd[i]) 
+            {
+                for (size_t j = 0; j < numVertices; j++) 
+                {
+                    if (reachableFromStart[j] && leadsToEnd[j] && graph.getAdjacencyMatrix()[i][j] != 0) 
+                    {
+                        subgraphMat[i][j] = graph.getAdjacencyMatrix()[i][j];       // Include the edge in the subgraph if it connects nodes in the subgraph
+                    }
+                }
+            }
+        }
+        
+        // Load the resulted matrix into the subgraph Graph that pass to the function as reference
+        subgraph.loadGraph(subgraphMat);
     }
 
 
@@ -520,7 +580,8 @@ namespace ariel {
      * @param visited A vector indicating whether each vertex has been visited.
      * @return The index of the vertex with the smallest distance that has not been visited.
      */
-    size_t Algorithms::findMinDistanceVertex(vector<int>& distance, vector<bool>& visited) {
+    size_t Algorithms::findMinDistanceVertex(vector<int>& distance, vector<bool>& visited) 
+    {
         size_t minVertex = INT_MAX;
         int minDistance = INT_MAX;          // We will start with the largest possible distance
 
@@ -547,7 +608,8 @@ namespace ariel {
      * @param parent The vector containing each vertex's parent in the path.
      * @return A string representing the path or an empty string if no path exists.
      */
-    string Algorithms::buildPath(size_t start, size_t end, vector<size_t>& parent) {
+    string Algorithms::buildPath(size_t start, size_t end, vector<size_t>& parent) 
+    {
         string path;
         size_t current = end;
 

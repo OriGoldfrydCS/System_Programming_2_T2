@@ -1,4 +1,3 @@
-// ID: 200661775
 // Email: origoldbsc@gmail.com
 
 #include "Graph.hpp"
@@ -503,9 +502,9 @@ namespace ariel {
 
 
     /**
-     * @brief This method increments the weight of each edge by 1 for all non-zero edges.
+     * @brief This method increments (prefix operator) the weight of each edge by 1 for all non-zero edges.
      * 
-     * @return The current graph.
+     * @return The current modified graph.
      */
     Graph& Graph::operator++() 
     {   
@@ -526,10 +525,24 @@ namespace ariel {
         return *this;   
     }
 
+
     /**
-     * @brief This method decrements the weight of each edge by 1 for all non-zero edges.
+     * @brief This method increments (postpix operator) the weight of each edge by 1 for all non-zero edges..
      * 
-     * @return The current graph.
+     * @return The graph before the operation.
+     */
+    Graph Graph::operator++(int) 
+    {
+        Graph temp = *this;  // Copy current state
+        ++(*this);           // Apply prefix increment
+        return temp;         // Return old state
+    }
+
+
+    /**
+     * @brief This method decrements (prefix operator) the weight of each edge by 1 for all non-zero edges.
+     * 
+     * @return The current modified graph.
      */
     Graph& Graph::operator--() 
     {
@@ -544,10 +557,22 @@ namespace ariel {
                 }
             }
         }
-        
+
         // Update number of edges
         (*this)._numEdges = countEdges();
         return *this;
+    }
+
+    /**
+     * @brief This method decrements (postfix operator) the weight of each edge by 1 for all non-zero edges.
+     * 
+     * @return The graph before the operation.
+     */
+    Graph Graph::operator--(int) 
+    {
+        Graph temp = *this;  // Copy current state
+        --(*this);           // Apply prefix decrement
+        return temp;         // Return old state
     }
 
 

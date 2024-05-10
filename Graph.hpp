@@ -1,4 +1,3 @@
-// ID: 200661775
 // Email: origoldbsc@gmail.com
 
 #ifndef GRAPH_HPP
@@ -237,6 +236,12 @@ class Graph
          */
         Graph& operator++();
 
+        /**
+         * @brief This method increments (postpix operator) the weight of each edge by 1 for all non-zero edges..
+         * 
+         * @return The graph before the operation.
+         */
+        Graph operator++(int); 
 
         /**
          * @brief This method decrements the weight of each edge by 1 for all non-zero edges.
@@ -244,6 +249,13 @@ class Graph
          */
         Graph& operator--();
 
+
+        /**
+         * @brief This method decrements (postfix operator) the weight of each edge by 1 for all non-zero edges.
+         * 
+         * @return The graph before the operation.
+         */
+        Graph operator--(int); 
 
         /**
          * @brief This method is for output stream operator for the graph.

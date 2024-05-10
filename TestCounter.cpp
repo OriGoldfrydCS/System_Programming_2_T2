@@ -1,4 +1,3 @@
-// ID: 200661775
 // Email: origoldbsc@gmail.com
 
 #define DOCTEST_CONFIG_IMPLEMENT
