@@ -49,12 +49,13 @@ class Graph
 
 
         /**
-         * @brief This auxiliary function compares the edges of the current graph with another graph.
+         * @brief This auxiliary function compares this graph with another graph to determine if it is smaller.
          * 
          * @param other The graph to compare with.
-         * @return True if the current graph has fewer edges or smaller edge values, otherwise false.
+         * @return True if this graph is smaller than the other graph, otherwise false.
          */
-        bool compareEdges(const Graph& other) const;
+        bool compareMagnitude(const Graph& other) const;
+
 
     // Public methods 
     public:

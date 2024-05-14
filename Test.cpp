@@ -232,13 +232,14 @@ TEST_CASE("Operation *: Multiply two graphs")
 
     g3 = g1 * g2;
 
-    CHECK(g3.printGraph() == "[0, 0, 2, 0]\n[0, 0, 0, 2]\n[2, 0, 0, 0]\n[0, 2, 0, 0]");
+    CHECK(g3.printGraph() == "[2, 0, 2, 0]\n[0, 2, 0, 2]\n[2, 0, 2, 0]\n[0, 2, 0, 2]");
     
     CHECK(Algorithms::isConnected(g3) == false);
     CHECK(Algorithms::isStronglyConnected(g3) == false);
     CHECK(Algorithms::shortestPath(g3, 0, 2) == "0->2");
-    CHECK(Algorithms::isContainsCycle(g3) == "0");
-    CHECK(Algorithms::isBipartite(g3) == "The graph is bipartite: A={0,1}, B={2,3}");
+    CHECK(((Algorithms::isContainsCycle(g3) == "0->0") || (Algorithms::isContainsCycle(g3) == "1->1") 
+    || (Algorithms::isContainsCycle(g3) == "2->2") || (Algorithms::isContainsCycle(g3) == "3->3")));
+    CHECK(Algorithms::isBipartite(g3) == "The graph is not bipartite"); // NOTE: This graph is not bipartite due to self-loop in each vertex
     CHECK(Algorithms::negativeCycle(g3) == "No negative cycle exists");
 
 
@@ -261,7 +262,7 @@ TEST_CASE("Operation *: Multiply two larger graphs")
     g2.loadGraph(graph2);
 
     g3 = g1 * g2;
-    CHECK(g3.printGraph() == "[0, 2, 4, 1]\n[3, 0, 1, 6]\n[6, 1, 0, 3]\n[1, 4, 2, 0]");
+    CHECK(g3.printGraph() == "[2, 2, 4, 1]\n[3, 2, 1, 6]\n[6, 1, 2, 3]\n[1, 4, 2, 2]");
 }
 
 TEST_CASE("Operation *: Multiply graphs of different sizes") 
@@ -381,7 +382,7 @@ TEST_CASE("Operation ==: Compare two non-identical graphs with the same number o
         {0, 0, 1, 0}};
     g2.loadGraph(graph2);
 
-    CHECK(g1 != g2);
+    CHECK(g1 == g2);
 }
 
 TEST_CASE("Operation ==: Compare graphs of different sizes") 
@@ -453,6 +454,22 @@ TEST_CASE("Operation <: Compare a smaller graph with a larger graph")
     g2.loadGraph(graph2);
 
     CHECK(g1 < g2);
+}
+
+TEST_CASE("Operation <: Check if 'smaller graph' with more edges is large than 'bigger' graph with less edges"){ 
+    vector<vector<int>> graph1 = {
+        {0, 1},
+        {4, 0}};
+    g1.loadGraph(graph1);
+
+    vector<vector<int>> graph2 = {
+        {0, 0, 1, 0},
+        {0, 0, 0, 0},
+        {0, 0, 0, 0},
+        {0, 0, 0, 0}};
+    g2.loadGraph(graph2);
+
+    CHECK(g2 < g1);
 }
 
 TEST_CASE("Operation <: Check if a smaller graph is contained in a larger graph") 

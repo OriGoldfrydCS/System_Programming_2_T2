@@ -306,12 +306,6 @@ namespace ariel {
             }
         }
 
-        // Remove self-loops (set diagonal elements to 0)
-        for (size_t i = 0; i < (*this)._numVertices; i++) 
-        {
-            newMatrix[i][i] = 0;
-        }
-
         // Load the new matrix and return it
         result.loadGraph(newMatrix);
         return result;
@@ -442,21 +436,28 @@ namespace ariel {
      */
     bool Graph::operator<(const Graph& other) const
     {
-        // Compare the number of vertices
-        if ((*this)._numVertices < other._numVertices)
+        // Step 1: Check if this graph is a subgraph of the other
+        if (isSubgraph(other))
         {
-            // Check if the this graph is a subgraph of the other graph
-            return isSubgraph(other) || (*this)._numEdges < other._numEdges;
+            return true;  
+        }
+        if (other.isSubgraph(*this))
+        {
+            return false;  
         }
 
-        // Compare the number of edges
-        if ((*this)._numVertices > other._numVertices)
+        // Step 2: Compare the number of edges
+        if (_numEdges < other._numEdges)
         {
-            return false;
+            return true;  
         }
-        
-        // If the number of vertices is equal, compare the number of edges
-        return compareEdges(other);
+        if (_numEdges > other._numEdges)
+        {
+            return false;  
+        }
+
+        // Step 3: Compare the order of the representative matrices
+        return compareMagnitude(other);
     }
 
 
@@ -563,6 +564,7 @@ namespace ariel {
         return *this;
     }
 
+
     /**
      * @brief This method decrements (postfix operator) the weight of each edge by 1 for all non-zero edges.
      * 
@@ -664,6 +666,12 @@ namespace ariel {
      */
     bool Graph::isSubgraph(const Graph& other) const
     {
+        // Ensure the sizes of adjacency matrices are correct
+        if ((*this)._numVertices > other._numVertices)
+        {
+            return false; 
+        }
+
         for (size_t i = 0; i < (*this)._numVertices; i++)
         {
             for (size_t j = 0; j < (*this)._numVertices; j++)
@@ -679,36 +687,13 @@ namespace ariel {
 
 
     /**
-     * @brief This auxiliary function compares the edges of the current graph with another graph.
+     * @brief This auxiliary function compares this graph with another graph to determine if it is smaller.
      * 
      * @param other The graph to compare with.
-     * @return True if the current graph has fewer edges or smaller edge values, otherwise false.
+     * @return True if this graph is smaller than the other graph, otherwise false.
      */
-    bool Graph::compareEdges(const Graph& other) const
+    bool Graph::compareMagnitude(const Graph& other) const
     {
-        if ((*this)._numEdges < other._numEdges)
-        {
-            return true;
-        }
-        if ((*this)._numEdges > other._numEdges)
-        {
-            return false;
-        }
-        for (size_t i = 0; i < (*this)._numVertices; i++)
-        {
-            for (size_t j = 0; j < (*this)._numVertices; j++)
-            {
-                // If the number of edges is equal, compare each value in the edge 
-                if ((*this)._adjacencyMatrix[i][j] < other._adjacencyMatrix[i][j])
-                {
-                    return true;
-                }
-                if ((*this)._adjacencyMatrix[i][j] > other._adjacencyMatrix[i][j])
-                {
-                    return false;
-                }
-            }
-        }
-        return false;
+        return (*this)._adjacencyMatrix.size() < other._adjacencyMatrix.size();
     }
 }

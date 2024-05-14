@@ -1,5 +1,6 @@
 # Email: origoldbsc@gmail.com
 
+
 # General macros
 CXX = clang++
 CXXFLAGS = -std=c++11 -Werror -Wsign-conversion
@@ -29,7 +30,7 @@ test: TestCounter.o Test.o $(OBJECTS)
 
 # Run clang-tidy
 tidy:
-	clang-tidy $(SOURCES) -checks=bugprone-*,clang-analyzer-*,cppcoreguidelines-*,performance-*,portability-*,readability-*,-cppcoreguidelines-pro-bounds-pointer-arithmetic,-cppcoreguidelines-owning-memory --warnings-as-errors=-* --
+	clang-tidy $(SOURCES) -header-filter=.* -checks=bugprone-*,clang-analyzer-*,cppcoreguidelines-*,performance-*,portability-*,readability-*,-cppcoreguidelines-pro-bounds-pointer-arithmetic,-cppcoreguidelines-owning-memory --warnings-as-errors=-* --
 
 # Run valgrind 
 valgrind: demo test
